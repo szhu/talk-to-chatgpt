@@ -94,7 +94,7 @@ function CN_SayOutLoud(text) {
     $("#TTGPTSettings").css("border-bottom", "8px solid green");
 
     // If speech recognition is active, disable it
-    if (CN_IS_LISTENING) CN_SPEECHREC.stop();
+    CN_SPEECHREC.stop();
 
     if (CN_FINISHED) return;
     CN_IS_READING = true;
@@ -156,6 +156,8 @@ function CN_KeepSpeechSynthesisActive() {
 
 // Split the text into sentences so the speech synthesis can start speaking as soon as possible
 function CN_SplitIntoSentences(text) {
+  return [text];
+
   var sentences = [];
   var currentSentence = "";
 
@@ -198,7 +200,10 @@ function CN_SplitIntoSentences(text) {
 function CN_CheckNewMessages() {
   // Any new messages?
   var currentMessageCount = jQuery(".text-base").length;
-  if (currentMessageCount > CN_MESSAGE_COUNT) {
+  if (
+    !document.querySelector(".result-streaming") &&
+    currentMessageCount > CN_MESSAGE_COUNT
+  ) {
     // New message!
     CN_MESSAGE_COUNT = currentMessageCount;
     CN_CURRENT_MESSAGE = jQuery(".text-base:last");
@@ -464,10 +469,10 @@ function CN_StartTTGPT() {
   setTimeout(function () {
     // Start speech rec
     CN_StartSpeechRecognition();
-
-    // Check for new messages
-    CN_CheckNewMessages();
   }, 1000);
+
+  // Check for new messages
+  CN_CheckNewMessages();
 }
 
 // Perform initialization after jQuery is loaded
